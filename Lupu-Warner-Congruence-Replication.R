@@ -91,17 +91,17 @@ for(i in 1:nrow(tab)){
                                             df$citizen.group == "c.party.all.c.class.all.c.buenos.all" &
                                             df$question == tab$question[i])]
   tab$c.all_e.job.0[i] <- df$congruence[which(df$elite.group == "e.party.all.job.0" & 
-                                              df$citizen.group == "c.party.all.c.class.all.c.buenos.all" &
-                                              df$question == tab$question[i])]
+                                            df$citizen.group == "c.party.all.c.class.all.c.buenos.all" &
+                                            df$question == tab$question[i])]
   tab$c.all_e.job.1[i] <- df$congruence[which(df$elite.group == "e.party.all.job.1" & 
-                                                      df$citizen.group == "c.party.all.c.class.all.c.buenos.all" &
-                                                      df$question == tab$question[i])]
+                                            df$citizen.group == "c.party.all.c.class.all.c.buenos.all" &
+                                            df$question == tab$question[i])]
   tab$c.class.1_e.all[i] <- df$congruence[which(df$elite.group == "e.party.all.job.all" & 
-                                                  df$citizen.group == "c.party.all.c.class.1.c.buenos.all" &
-                                                  df$question == tab$question[i])]
+                                            df$citizen.group == "c.party.all.c.class.1.c.buenos.all" &
+                                            df$question == tab$question[i])]
   tab$c.class.4_e.all[i] <- df$congruence[which(df$elite.group == "e.party.all.job.all" & 
-                                                df$citizen.group == "c.party.all.c.class.4.c.buenos.all" &
-                                                df$question == tab$question[i])]
+                                            df$citizen.group == "c.party.all.c.class.4.c.buenos.all" &
+                                            df$question == tab$question[i])]
 }
 tab
 rm(df,tab,i)
@@ -129,8 +129,9 @@ r2.corr.mer(mod1.P41)
 mod1.P50 <- glmer(cong_P50  ~ as.factor(c_buenosaires) + c_age + as.factor(c_female) + as.factor(c_P37) + 
                    as.factor(c_NSE_AGR)+ as.factor(e_job) + as.factor(e_Partido) + (1|c_ncue) + (1|e_n), 
                  family=binomial(link="logit"), data=df)
+# Did it fail to converge? Well, on an absolute convergence criterion. Let's try a relative convergence criterion.
 relgrad <- with(mod1.P50@optinfo$derivs,solve(Hessian,gradient))
-max(abs(relgrad)) # This is large so we should be careful with inferences
+max(abs(relgrad)) # This is very large so we should be careful with inferences on this issue dimension
 summary(mod1.P50)
 r2.corr.mer(mod1.P50)
 
@@ -233,33 +234,33 @@ fig2 <- ggplot(plotmat, aes(x=est,y=iter)) +
   labs(title=NULL,x="Difference in elite-mass congruence",y=NULL) +
   theme(text=element_text(family="Times"))
 pdf("figure2.pdf", width=11, height=5)
-fig2
-dev.off() # warnings are the 5 fake data points not plotted, only used for x axis.
+fig2 # warnings are the 5 fake data points not plotted, only used for x axis.
+dev.off() 
 
 ### Effect sizes/substantive significance
 # GBA residency: Economic policy
-testdat.GBA   <- c(1,1,round(44.51),1,0,0,0,1,0,0,1,0,0,1,0)
+testdat.GBA   <- c(1,1,round(44.51),1,0,0,0,1,0,0,1,0,0,1,0) # constructing a scenario with everything at its mean/mode
 testdat.NoGBA <- c(1,0,round(44.51),1,0,0,0,1,0,0,1,0,0,1,0)
 testdat <- cbind(testdat.GBA,testdat.NoGBA)
-preds <- t(matrix(fixef(mod1.econ.state))) %*% testdat # predicted congruence for econ
+preds <- t(matrix(fixef(mod1.econ.state))) %*% testdat # predicted congruence for Economic policy dimension
 (preds[1]-preds[2])/preds[2]
 # Party ID: Ideology, Democracy, and Economic policy
 testdat.P37_2 <- c(1,0,round(44.51),1,1,0,0,0,0,0,1,0,0,1,0)
 testdat.P37_1 <- c(1,0,round(44.51),1,0,0,0,0,0,0,1,0,0,1,0)
 testdat <- cbind(testdat.P37_2,testdat.P37_1)
-preds <- t(matrix(fixef(mod1.P41))) %*% testdat # predicted congruence for econ
+preds <- t(matrix(fixef(mod1.P41))) %*% testdat # predicted congruence for Economic policy dimension
 (preds[2]-preds[1])/preds[1]
-preds <- inv.logit(t(matrix(fixef(mod1.P50))) %*% testdat) # predicted congruence for dem
+preds <- inv.logit(t(matrix(fixef(mod1.P50))) %*% testdat) # predicted congruence for Democracy dimension
 (preds[2]-preds[1])/preds[1]
-preds <- t(matrix(fixef(mod1.econ.state))) %*% testdat # predicted congruence for econ
+preds <- t(matrix(fixef(mod1.econ.state))) %*% testdat # predicted congruence for Economic policy dimension
 (preds[2]-preds[1])/preds[1]
 # SES: Populism and Order versus liberty
 testdat.NSE4 <- c(1,0,round(44.51),1,0,0,0,1,0,0,1,0,0,1,0)
 testdat.NSE1 <- c(1,0,round(44.51),1,0,0,0,1,0,0,0,0,0,1,0)
 testdat <- cbind(testdat.NSE1,testdat.NSE4)
-preds <- t(matrix(fixef(mod1.pop))) %*% testdat # predicted congruence for populism
+preds <- t(matrix(fixef(mod1.pop))) %*% testdat # predicted congruence for Populism issue dimension
 (preds[1]-preds[2])/preds[1]
-preds <- inv.logit(t(matrix(fixef(mod1.P55))) %*% testdat) # predicted congruence for order v liberty
+preds <- inv.logit(t(matrix(fixef(mod1.P55))) %*% testdat) # predicted congruence for Order versus liberty
 preds
 preds[1]/preds[2]
 
@@ -328,6 +329,8 @@ vars <- rev(c("SES level 1 (A, B, C1)","SES level 2 (C2)","SES level 3 (C3)","SE
 plotmat2 <- plotmat[which(plotmat$iter == 1),]
 plotmat2 <- plotmat2[c(3,1,2,5,4),]
 plotmat2$iter <- rev(1:5)
+
+# plot
 fig3 <- ggplot(plotmat2, aes(x=est,y=iter)) + 
   theme_bw() + 
   theme(panel.grid.minor = element_blank(), panel.grid.major = element_blank()) +
@@ -343,9 +346,11 @@ pdf("figure3.pdf", width=5, height=5)
 fig3
 dev.off()
 
+# clean up from main analysis
+rm(list=ls()[!(ls() %in% c("ARGcitizens","ARGelites","df","completeFun","integer_breaks","r2.corr.mer","rescalr"))]); gc()
 
-rm(list=ls(pattern=c("mod","coef","se","testdat"))); rm(fakemin,fakemax,preds,plotmat,plotmat2,fig2,fig3,relgrad,vars); gc() # ignore warning
 
+#### Appendix and supporting information
 
 ### Table A3: Robustness to using only legislative elites for dyadic results ####
 leg.df <- df[which(df$e_job == 0),]
@@ -366,6 +371,7 @@ r2.corr.mer(mod3.P41)
 mod3.P50 <- glmer(cong_P50 ~ as.factor(c_buenosaires) + c_age + as.factor(c_female) + as.factor(c_P37) + 
                                       as.factor(c_NSE_AGR)+ as.factor(e_Partido) + (1|e_n),
                                       family=binomial(link="logit"), data=leg.df) # note no citizen REs
+# Again, convergence fails on absolute criterion, but not on relative criterion.
 relgrad <- with(mod3.P50@optinfo$derivs,solve(Hessian,gradient))
 max(abs(relgrad)) # This is less than .001 so probably fine
 summary(mod3.P50)
@@ -426,7 +432,8 @@ rm(list=ls(pattern="mod")); rm(relgrad, leg.df); gc()
 
 ### Table A5: Bayesian replication of MLE results in Figure 2/Table A1
 # This is memory-intensive and takes a while (approx 4 hours on my machine). I recommend storing the 
-# coefficients and HPDs after each model, clearing the memory, then re-importing and plotting at the end. 
+# coefficients and HPDs after each model, clearing the memory, then (if further analysis is desired) 
+# re-importing and plotting at the end. 
 
 # MCMCglmm only uses 1 chain, so we'll run each model twice to generate two chains, then evaluate convergence.
 
