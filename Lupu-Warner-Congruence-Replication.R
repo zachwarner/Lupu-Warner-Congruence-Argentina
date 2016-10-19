@@ -7,7 +7,7 @@
 rm(list=ls()); gc()
 require(foreign); require(ggplot2); require(arm); require(scales); require(MCMCglmm); require(boot)
 require(plotMCMC); require(grid)
-setwd("/mywd")
+setwd("/Users/Zach/Dropbox/RESEARCH/Lupu-Warner-Congruence-Argentina/Lupu-Warner-Congruence-Argentina")
 
 
 ##### VERSION CONTROL #####
@@ -73,6 +73,7 @@ fig1 <- ggplot(dens, aes(x=dem_agg,group=type)) +
   annotate("text",x=1.5,y=.15,label="Elites",family="Times") +
   labs(title=NULL,x="Self-placement on a left-right scale",y="Density") +
   theme(text=element_text(family="Times"))
+ggsave(file="figure1.svg", width=5, height=6)
 pdf("figure1.pdf",width=5,height=6)
 fig1 # ignore the warning message, it's for NA values
 dev.off()
@@ -233,6 +234,7 @@ fig2 <- ggplot(plotmat, aes(x=est,y=iter)) +
   scale_y_continuous(limits = c(1,20), breaks = c(1:4,6:7,9:12,14:17,19:20),labels=vars) +
   labs(title=NULL,x="Difference in elite-mass congruence",y=NULL) +
   theme(text=element_text(family="Times"))
+ggsave(file="figure2.svg", width=11, height=5)
 pdf("figure2.pdf", width=11, height=5)
 fig2 # warnings are the 5 fake data points not plotted, only used for x axis.
 dev.off() 
@@ -341,8 +343,10 @@ fig3 <- ggplot(plotmat2, aes(x=est,y=iter)) +
   scale_colour_manual(values=c("black", "black")) +
   scale_y_continuous(breaks = seq(1:5),labels=rev(plotmat2$issue)) +
   labs(title=NULL,x="Divergence between high and low SES respondents",y=NULL) +
+  theme(axis.title.x=element_text(size=11)) + 
   theme(text=element_text(family="Times"))
-pdf("figure3.pdf", width=5, height=5)
+ggsave(file="figure3.svg", width=6, height=6)
+pdf("figure3.pdf", width=6, height=6)
 fig3
 dev.off()
 
